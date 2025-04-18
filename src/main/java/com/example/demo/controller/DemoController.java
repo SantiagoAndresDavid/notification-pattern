@@ -11,5 +11,4 @@ public class DemoController {
     public String home() {
         return "¡La aplicación está funcionando!";
     }
-    
 }

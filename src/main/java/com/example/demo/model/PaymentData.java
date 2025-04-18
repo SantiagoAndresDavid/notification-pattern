@@ -15,7 +15,7 @@ public class PaymentData {
     private final double amount;
     private final String paymentMethod;
     private final String customerName;
-    
+     
     @Override
     public String toString() {
         return "PaymentData{" +

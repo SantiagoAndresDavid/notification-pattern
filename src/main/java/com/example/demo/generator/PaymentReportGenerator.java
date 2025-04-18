@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -26,7 +27,7 @@ import java.util.Locale;
 @Component
 public class PaymentReportGenerator {
 
-    private static final String COMPANY_LOGO_PATH = "report/images/company-logo.png";
+    private static final String COMPANY_LOGO_PATH = "/workspaces/notification-pattern/src/main/utils/test-image.jpg";
     private static final Color LIGHT_THEME_COLOR = new Color(255, 255, 255);
     private static final Color DARK_THEME_COLOR = new Color(50, 50, 50);
     private static final Color LIGHT_TEXT_COLOR = new Color(0, 0, 0);
@@ -105,15 +106,21 @@ public class PaymentReportGenerator {
     
     private void addLogo(Document document) throws DocumentException, IOException {
         try {
-            byte[] logoBytes = new ClassPathResource(COMPANY_LOGO_PATH).getInputStream().readAllBytes();
-            Image logo = Image.getInstance(logoBytes);
+            // Usar FileSystemResource en lugar de ClassPathResource para acceder al logo
+            File logoFile = new File(COMPANY_LOGO_PATH);
+            if (!logoFile.exists()) {
+                document.add(new Paragraph("Logo no encontrado en: " + COMPANY_LOGO_PATH));
+                return;
+            }
+            
+            Image logo = Image.getInstance(logoFile.getAbsolutePath());
             logo.scaleToFit(150, 150);
             logo.setAlignment(Element.ALIGN_CENTER);
             document.add(logo);
             document.add(Chunk.NEWLINE);
         } catch (IOException e) {
-            // Si no se puede cargar el logo, continuar sin él
-            document.add(new Paragraph("Logo no disponible"));
+            // Si no se puede cargar el logo, agregar un mensaje explicativo
+            document.add(new Paragraph("No se pudo cargar el logo: " + e.getMessage()));
         }
     }
     
